@@ -31,7 +31,7 @@ public class AnaliseService {
         return resultado;
     }
 
-    public List<ResultadoAnalise> obterRelatorio(Reuniao reuniao){
+    public List<ResultadoAnalise> obterRelatorio(){
         return repo.buscarTodos();
     }
 }

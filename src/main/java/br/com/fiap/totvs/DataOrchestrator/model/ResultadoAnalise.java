@@ -11,7 +11,7 @@ public class ResultadoAnalise {
     private List<RiscoEncontrado> risco = new ArrayList<>();
 
     //Classe interna para estruturar risco
-    public record RiscoEncontrado(String termo, String contexto){};
+    private record RiscoEncontrado(String termo, String contexto){};
 
     public void addContextoRisco(String termo, String contexto){
         this.risco.add(new RiscoEncontrado(termo, contexto));

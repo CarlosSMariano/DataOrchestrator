@@ -14,6 +14,12 @@ public class MemoriaRepository {
         this.bancoDeDados.add(resultadoAnalise);
     }
 
+    public boolean buscarReuniao(String id){
+
+        return bancoDeDados.stream().anyMatch(b -> b.getReuniaoId().equals(id));
+
+    }
+
     public List<ResultadoAnalise> buscarTodos(){
         return bancoDeDados;
     }

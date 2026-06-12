@@ -22,7 +22,7 @@ public class RegraRisco extends RegraAnalise {
             if (texto.contains(termo)){
                 int index = texto.indexOf(termo);
 
-                String contexto = texto.substring(Math.max(0, index - 20), Math.min(index + 20, texto.length()));
+                String contexto = texto.substring(Math.max(0, index - 100), Math.min(index + 100, texto.length()));
                 resultado.addContextoRisco(termo, contexto);
             }
         }

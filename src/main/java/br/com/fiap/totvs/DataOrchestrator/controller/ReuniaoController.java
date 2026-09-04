@@ -4,6 +4,8 @@ import br.com.fiap.totvs.DataOrchestrator.model.ResultadoAnalise;
 import br.com.fiap.totvs.DataOrchestrator.model.Reuniao;
 import br.com.fiap.totvs.DataOrchestrator.service.AnaliseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,17 +19,23 @@ public class ReuniaoController {
     @Autowired
     private AnaliseService service;
 
+    private record StatusResponse(String status, String mensagem, String timestamp){};
+
     @GetMapping("/status")
-    public Map<String, String> status() {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "Tudo certo!");
-        response.put("code", "200");
-        response.put("message", "API DataOrchestrator está operando normalmente");
-        return response;
+    public ResponseEntity<StatusResponse> status() {
+       StatusResponse status = new StatusResponse(
+               "Online",
+               "API DataOrchestrator está operando normalmente",
+               java.time.LocalTime.now().toString()
+       );
+       return ResponseEntity.status(HttpStatus.OK).body(status);
     }
+
     @PostMapping
-    public ResultadoAnalise inserirReuniao(@RequestBody Reuniao reuniao) {
-        return service.processarReuniao(reuniao);
+    public ResponseEntity<ResultadoAnalise> inserirReuniao(@RequestBody Reuniao reuniao) {
+        ResultadoAnalise resultado = service.processarReuniao(reuniao);
+
+        return ResponseEntity.ok(resultado);
     }
 
     @GetMapping

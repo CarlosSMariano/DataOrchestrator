@@ -1,13 +1,18 @@
 version: '3.8'
+
 services:
   oracle-db:
-    image: gvenzl/oracle-free:23.4-slim
+    image: gvenzl/oracle-free:latest-faststart
     container_name: oracle_challenge
-    environment:
-      - ORACLE_PASSWORD=admin
+    privileged: true
     ports:
       - "1521:1521"
+    environment:
+      - ORACLE_PASSWORD=admin
+      - APP_USER=admin_totvs
+      - APP_USER_PASSWORD=admin
     volumes:
       - oracle_data:/opt/oracle/oradata
+
 volumes:
   oracle_data:

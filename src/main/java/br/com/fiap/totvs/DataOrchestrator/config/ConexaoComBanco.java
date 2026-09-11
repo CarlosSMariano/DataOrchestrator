@@ -18,8 +18,7 @@ public class ConexaoComBanco {
             return conn;
 
         }catch(SQLException e){
-            System.err.println("Erro ao conectar ao banco de dados:" + e.getMessage());
-            throw e;
+            throw new SQLException("Erro ao conectar ao banco de dados:" + e.getMessage());
         }
     }
 }

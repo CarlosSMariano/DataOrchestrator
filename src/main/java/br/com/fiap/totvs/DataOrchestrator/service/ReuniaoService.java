@@ -24,15 +24,14 @@ public class ReuniaoService {
             throw new IllegalArgumentException("Os dados da reunião não podem ser nulos.");
         }
 
-        if (reuniaoDAO.existePorTitulo(reuniaoInput.idReuniao())){
+        if (reuniaoDAO.existePorTitulo(reuniaoInput.tituloReuniao())){
             throw new IllegalArgumentException("Reunião já cadastrada.");
         }
 
-        if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) != null){
-            throw new IllegalArgumentException("Cliente já cadastrado.");
+        if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) == null){
+            clienteDAO.insert(reuniaoInput.nomeCliente(), reuniaoInput.dtReuniao());
         }
 
-        clienteDAO.insert(reuniaoInput.nomeCliente(), reuniaoInput.dtReuniao());
         ClienteEntity cli = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente());
         reuniaoDAO.inserir(reuniaoInput, cli.id());
     }
@@ -42,7 +41,7 @@ public class ReuniaoService {
     }
 
     public void deletarReuniao(long id){
-        if (reuniaoDAO.existePorId(id)){
+        if (!reuniaoDAO.existePorId(id)){
             throw new IllegalArgumentException("Reunião inexistente.");
         }
 

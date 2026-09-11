@@ -9,5 +9,4 @@ public class DataOrchestratorApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DataOrchestratorApplication.class, args);
 	}
-
 }

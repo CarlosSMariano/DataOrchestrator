@@ -14,10 +14,11 @@ public class ReuniaoDAO {
     public void inserir(ReuniaoInput reuniao, Long idCliente) {
         String insert = "INSERT INTO REUNIAO (TITULO_REUN, DATA_REUN, TEXT_TRANS, STATUS_PROCESS, CLIENTE_ID_CLI) VALUES (?, ?, ?, ?, ?)";
 
-        try(Connection conn = ConexaoComBanco.getConnection()){
+        try(Connection conn = ConexaoComBanco.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(insert)){
 
-            PreparedStatement stmt = conn.prepareStatement(insert);
-            stmt.setString(1, reuniao.idReuniao());
+
+            stmt.setString(1, reuniao.tituloReuniao());
             stmt.setDate(2, reuniao.dtReuniao());
             stmt.setString(3, reuniao.textoTranscricao());
             stmt.setString(4, reuniao.statusProcesso());
@@ -80,10 +81,10 @@ public class ReuniaoDAO {
                         rs.getLong("ID_REUN"),
                         rs.getString("TITULO_REUN"),
                         rs.getTimestamp("DATA_REUN").toLocalDateTime(),
-                        rs.getString("TEXT_TRANS"),
                         rs.getString("STATUS_PROCESS"),
                         rs.getDouble("RISCO_CHURN"),
-                        rs.getString("CLIENTE_ID_CLI")
+                        rs.getLong("CLIENTE_ID_CLI"),
+                        rs.getString("TEXT_TRANS")
                 );
                 reunioes.add(reuniao);
             }

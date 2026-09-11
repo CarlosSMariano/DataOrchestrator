@@ -8,9 +8,9 @@ public record ReuniaoEntity (
         Long id,
         String titulo,
         LocalDateTime data,
-        String textoTranscricao,
         String statusProcesso,
         Double riscoChurn,
-        String clienteId
+        Long clienteId,
+        String textoTranscricao
 ){
 }

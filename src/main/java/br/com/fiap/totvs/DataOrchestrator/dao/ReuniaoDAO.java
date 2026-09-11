@@ -11,10 +11,9 @@ import java.util.ArrayList;
 @Repository
 public class ReuniaoDAO {
 
-    public void inserir(ReuniaoInput reuniao) {
+    public void inserir(ReuniaoInput reuniao, Long idCliente) {
         String insert = "INSERT INTO REUNIAO (TITULO_REUN, DATA_REUN, TEXT_TRANS, STATUS_PROCESS, CLIENTE_ID_CLI) VALUES (?, ?, ?, ?, ?)";
 
-        System.out.println(reuniao.idReuniao()+"\n"+reuniao.dtReuniao()+"\n"+reuniao.statusProcesso()+"\n"+reuniao.nomeCliente());
         try(Connection conn = ConexaoComBanco.getConnection()){
 
             PreparedStatement stmt = conn.prepareStatement(insert);
@@ -22,6 +21,7 @@ public class ReuniaoDAO {
             stmt.setDate(2, reuniao.dtReuniao());
             stmt.setString(3, reuniao.textoTranscricao());
             stmt.setString(4, reuniao.statusProcesso());
+            stmt.setLong(5, idCliente);
 
             stmt.executeUpdate();
         }catch(SQLException e){
@@ -96,17 +96,24 @@ public class ReuniaoDAO {
         return reunioes;
     }
 
-    public void deletar(long id){
-        String query = "DELETE FROM REUNIAO WHERE ID_REUN = ?";
+    public void deletar(long id) {
+        String sql = "DELETE FROM REUNIAO WHERE ID_REUN = ?";
 
-        try{
-            Connection conn = ConexaoComBanco.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query);
+        try (Connection conn = ConexaoComBanco.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.executeUpdate();
+            stmt.setLong(1, id);
+            int linhasAfetadas = stmt.executeUpdate();
 
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao deletar dados da tabela REUNIAO: ", e);
+            if (linhasAfetadas == 0) {
+                throw new RuntimeException("Reunião com ID " + id + " não encontrada para exclusão.");
+            }
+
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 2292) {
+                throw new RuntimeException("Não é possível excluir esta reunião pois existem registros vinculados a ela (Insights/Evidências).");
+            }
+            throw new RuntimeException("Erro ao deletar reunião: ", e);
         }
     }
 }

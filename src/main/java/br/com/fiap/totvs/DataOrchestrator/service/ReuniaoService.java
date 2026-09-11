@@ -1,6 +1,8 @@
 package br.com.fiap.totvs.DataOrchestrator.service;
 
+import br.com.fiap.totvs.DataOrchestrator.dao.ClienteDAO;
 import br.com.fiap.totvs.DataOrchestrator.dao.ReuniaoDAO;
+import br.com.fiap.totvs.DataOrchestrator.model.ClienteEntity;
 import br.com.fiap.totvs.DataOrchestrator.model.ReuniaoEntity;
 import br.com.fiap.totvs.DataOrchestrator.model.ReuniaoInput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ public class ReuniaoService {
     @Autowired
     private ReuniaoDAO reuniaoDAO;
 
+    @Autowired
+    private ClienteDAO clienteDAO;
+
     public void inserirNoBanco(ReuniaoInput reuniaoInput){
         if(reuniaoInput == null){
             throw new IllegalArgumentException("Os dados da reunião não podem ser nulos.");
@@ -23,7 +28,13 @@ public class ReuniaoService {
             throw new IllegalArgumentException("Reunião já cadastrada.");
         }
 
-        reuniaoDAO.inserir(reuniaoInput);
+        if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) != null){
+            throw new IllegalArgumentException("Cliente já cadastrado.");
+        }
+
+        clienteDAO.insert(reuniaoInput.nomeCliente(), reuniaoInput.dtReuniao());
+        ClienteEntity cli = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente());
+        reuniaoDAO.inserir(reuniaoInput, cli.id());
     }
 
     public ArrayList<ReuniaoEntity> listarReunioes(){

@@ -40,11 +40,13 @@ public class ReuniaoService {
        return reuniaoDAO.listar();
     }
 
-    public void deletarReuniao(long id){
-        if (!reuniaoDAO.existePorId(id)){
-            throw new IllegalArgumentException("Reunião inexistente.");
-        }
+    public ReuniaoEntity buscarReuniao(long idReuniao){
+        if (!reuniaoDAO.existePorId(idReuniao)) throw new IllegalArgumentException("Reunião inexistente.");
+        return reuniaoDAO.buscarReuniaoPorId(idReuniao);
+    }
 
+    public void deletarReuniao(long id){
+        if (!reuniaoDAO.existePorId(id)) throw new IllegalArgumentException("Reunião inexistente.");
         reuniaoDAO.deletar(id);
     }
 }

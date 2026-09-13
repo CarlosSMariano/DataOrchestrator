@@ -68,6 +68,31 @@ public class ReuniaoDAO {
         return false;
     }
 
+    public ReuniaoEntity buscarReuniaoPorId(long id){
+        String query = "SELECT * FROM REUNIAO WHERE ID_REUN = ?";
+
+        try(Connection conn = ConexaoComBanco.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery()){
+
+            if(rs.next()){
+                return new ReuniaoEntity(
+                        rs.getLong("ID_REUN"),
+                        rs.getString("TITULO_REUN"),
+                        rs.getTimestamp("DATA_REUN").toLocalDateTime(),
+                        rs.getString("STATUS_PROCESS"),
+                        rs.getDouble("RISCO_CHURN"),
+                        rs.getLong("CLIENTE_ID_CLI"),
+                        rs.getString("TEXT_TRANS")
+                );
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar Reuniao por ID:" + e);
+        }
+        return null;
+    }
+
     public ArrayList<ReuniaoEntity> listar(){
         String query = "SELECT * FROM REUNIAO";
         ArrayList<ReuniaoEntity> reunioes = new ArrayList<>();
@@ -112,9 +137,20 @@ public class ReuniaoDAO {
 
         } catch (SQLException e) {
             if (e.getErrorCode() == 2292) {
-                throw new RuntimeException("Não é possível excluir esta reunião pois existem registros vinculados a ela (Insights/Evidências).");
+                throw new RuntimeException("Não é possível excluir esta reunião pois existem registros vinculados a ela.");
             }
             throw new RuntimeException("Erro ao deletar reunião: ", e);
+        }
+    }
+
+    public void deletarPorCliente(long id, Connection conn){
+        String query = "DELETE FROM REUNIAO WHERE CLIENTE_ID_CLI = ?";
+
+        try(PreparedStatement stmt = conn.prepareStatement(query)){
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao deletar reunioes do cliente: " + e);
         }
     }
 }

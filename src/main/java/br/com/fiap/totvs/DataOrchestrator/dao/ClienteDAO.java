@@ -3,9 +3,9 @@ package br.com.fiap.totvs.DataOrchestrator.dao;
 import br.com.fiap.totvs.DataOrchestrator.config.ConexaoComBanco;
 import br.com.fiap.totvs.DataOrchestrator.model.ClienteEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 @Repository
 public class ClienteDAO {
@@ -44,5 +44,93 @@ public class ClienteDAO {
             throw new RuntimeException("Erro ao buscar cliente por nome: " + e);
         }
         return null;
+    }
+
+    public ClienteEntity buscarPorID(long id){
+        String query = "SELECT * FROM CLIENTE WHERE ID_CLI = ?";
+
+        try(Connection conn = ConexaoComBanco.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)){
+
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new ClienteEntity(
+                        rs.getLong("ID_CLI"),
+                        rs.getString("NOME_CLI"),
+                        rs.getDate("DATA_CADAST") != null ? Date.valueOf(rs.getDate("DATA_CADAST").toLocalDate()) : null
+                );
+            }
+
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao buscar cliente por nome: " + e);
+        }
+        return null;
+    }
+
+    public ArrayList<ClienteEntity> listar(){
+        String query = "SELECT * FROM CLIENTE";
+
+        ArrayList<ClienteEntity> clientes = new ArrayList<>();
+
+        try(Connection conn = ConexaoComBanco.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery()){
+
+            while(rs.next()){
+                ClienteEntity cliente = new ClienteEntity(
+                  rs.getLong("ID_CLI"),
+                  rs.getString("NOME_CLI"),
+                  rs.getDate("DATA_CADAST") != null ? Date.valueOf(rs.getDate("DATA_CADAST").toLocalDate()) : null
+                );
+                clientes.add(cliente);
+            }
+        }catch(SQLException e){
+            throw new RuntimeException("Erro ao listar dados da tabela Cliente" + e);
+        }
+        return clientes;
+    }
+
+    public void deletar(long id) {
+        String query = "DELETE FROM CLIENTE WHERE ID_CLI = ?";
+
+        try (Connection conn = ConexaoComBanco.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try{
+               new ReuniaoDAO().deletarPorCliente(id, conn);
+
+                try(PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setLong(1, id);
+                    stmt.executeUpdate();
+                }
+                conn.commit();
+
+            }catch (SQLException e){
+                conn.rollback();
+                throw new RuntimeException("Erro ao deletar cliente e suas reuniões: " + e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao deletar cliente: ", e);
+        }
+    }
+
+    public boolean existePorId(Long id) {
+        String query = "SELECT COUNT(ID_CLI) FROM CLIENTE WHERE ID_CLI = ?";
+
+        try(Connection conn = ConexaoComBanco.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(query)){
+            stmt.setLong(1, id);
+
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao buscar cliente por ID: " + e);
+        }
+        return false;
     }
 }

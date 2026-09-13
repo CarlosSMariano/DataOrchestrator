@@ -30,17 +30,22 @@ public class ReuniaoController {
        return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
+    @GetMapping
+    public ResponseEntity<ArrayList<ReuniaoEntity>> listarReunioes() {
+        return ResponseEntity.ok(service.listarReunioes());
+    }
+
+   @GetMapping("/{id}")
+    public ResponseEntity<ReuniaoEntity> buscarReuniao(@PathVariable long id) {
+        ReuniaoEntity lista = service.buscarReuniao(id);
+        return ResponseEntity.ok(lista);
+    }
+
     @PostMapping
     public ResponseEntity<RespostaAPI> cadastrarReuniao(@RequestBody ReuniaoInput reuniao) {
           service.inserirNoBanco(reuniao);
           RespostaAPI resposta = new RespostaAPI("Reunião cadastrada com sucesso!", java.time.LocalDateTime.now().toString());
           return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
-    }
-
-    @GetMapping
-    public ResponseEntity<ArrayList<ReuniaoEntity>> listarReunioes() {
-        ArrayList<ReuniaoEntity> lista = service.listarReunioes();
-        return ResponseEntity.ok(lista);
     }
 
     @DeleteMapping("/{id}")

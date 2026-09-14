@@ -24,7 +24,7 @@ public class ReuniaoController {
     public ResponseEntity<StatusResponse> status() {
        StatusResponse status = new StatusResponse(
                "Online",
-               "API DataOrchestrator está operando normalmente",
+               "Endpoint REUNIÕES está operando normalmente",
                java.time.LocalTime.now().toString()
        );
        return ResponseEntity.status(HttpStatus.OK).body(status);
@@ -46,6 +46,13 @@ public class ReuniaoController {
           service.inserirNoBanco(reuniao);
           RespostaAPI resposta = new RespostaAPI("Reunião cadastrada com sucesso!", java.time.LocalDateTime.now().toString());
           return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RespostaAPI> atualizarReuniao(@PathVariable long id, @RequestBody ReuniaoInput reuniao) {
+        service.atualizarReuniao(id, reuniao);
+        RespostaAPI resposta = new RespostaAPI("Reunião atualizada com sucesso!", java.time.LocalDateTime.now().toString());
+        return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 
     @DeleteMapping("/{id}")

@@ -10,13 +10,13 @@ import java.util.ArrayList;
 @Repository
 public class ClienteDAO {
 
-    public void insert(String nomeCliente, Date dataCadastro){
+    public void insert(ClienteEntity cliente){
         String query = "INSERT INTO CLIENTE (NOME_CLI, DATA_CADAST) VALUES (?, ?)";
 
         try(Connection conn = ConexaoComBanco.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)){
-            stmt.setString(1, nomeCliente);
-            stmt.setDate(2, dataCadastro);
+            stmt.setString(1, cliente.nome());
+            stmt.setDate(2, cliente.dataCadast());
             stmt.executeUpdate();
         }catch(SQLException e){
             throw new RuntimeException("Erro ao inserir dados na tabela Cliente: " + e);
@@ -92,6 +92,38 @@ public class ClienteDAO {
         return clientes;
     }
 
+    public boolean existePorId(Long id) {
+        String query = "SELECT COUNT(ID_CLI) FROM CLIENTE WHERE ID_CLI = ?";
+
+        try(Connection conn = ConexaoComBanco.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)){
+            stmt.setLong(1, id);
+
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Erro ao buscar cliente por ID: " + e);
+        }
+        return false;
+    }
+
+    public void atualizar(long id, ClienteEntity cliente){
+        String query = "UPDATE CLIENTE SET NOME_CLI = ?, DATA_CADAST = ? WHERE ID_CLI = ?";
+
+        try(Connection conn = ConexaoComBanco.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)){
+            stmt.setString(1, cliente.nome());
+            stmt.setDate(2, cliente.dataCadast());
+            stmt.setLong(3, id);
+            stmt.executeUpdate();
+        }catch(SQLException e){
+            throw new RuntimeException("Erro ao inserir dados na tabela Cliente: " + e);
+        }
+    }
+
     public void deletar(long id) {
         String query = "DELETE FROM CLIENTE WHERE ID_CLI = ?";
 
@@ -116,21 +148,5 @@ public class ClienteDAO {
         }
     }
 
-    public boolean existePorId(Long id) {
-        String query = "SELECT COUNT(ID_CLI) FROM CLIENTE WHERE ID_CLI = ?";
 
-        try(Connection conn = ConexaoComBanco.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(query)){
-            stmt.setLong(1, id);
-
-            try(ResultSet rs = stmt.executeQuery()){
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        }catch (SQLException e){
-            throw new RuntimeException("Erro ao buscar cliente por ID: " + e);
-        }
-        return false;
-    }
 }

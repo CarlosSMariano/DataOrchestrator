@@ -29,7 +29,10 @@ public class ReuniaoService {
         }
 
         if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) == null){
-            clienteDAO.insert(reuniaoInput.nomeCliente(), reuniaoInput.dtReuniao());
+            ClienteEntity cliente = new ClienteEntity(
+                    null, reuniaoInput.nomeCliente(),
+                    reuniaoInput.dtReuniao());
+            clienteDAO.insert(cliente);
         }
 
         ClienteEntity cli = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente());
@@ -43,6 +46,23 @@ public class ReuniaoService {
     public ReuniaoEntity buscarReuniao(long idReuniao){
         if (!reuniaoDAO.existePorId(idReuniao)) throw new IllegalArgumentException("Reunião inexistente.");
         return reuniaoDAO.buscarReuniaoPorId(idReuniao);
+    }
+
+    public void atualizarReuniao(long idReuniao, ReuniaoInput reuniaoInput){
+        if(reuniaoInput == null){
+            throw new IllegalArgumentException("Os dados da reunião não podem ser nulos.");
+        }
+
+        if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) == null){
+            ClienteEntity cliente = new ClienteEntity(
+                    null, reuniaoInput.nomeCliente(),
+                    reuniaoInput.dtReuniao());
+            clienteDAO.insert(cliente);
+        }
+
+        long idCliente = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()).id();
+
+        reuniaoDAO.atualizar(idReuniao,idCliente, reuniaoInput);
     }
 
     public void deletarReuniao(long id){

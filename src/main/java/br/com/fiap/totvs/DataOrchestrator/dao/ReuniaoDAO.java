@@ -72,9 +72,10 @@ public class ReuniaoDAO {
         String query = "SELECT * FROM REUNIAO WHERE ID_REUN = ?";
 
         try(Connection conn = ConexaoComBanco.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(query);
-        ResultSet rs = stmt.executeQuery()){
+        PreparedStatement stmt = conn.prepareStatement(query)){
 
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
             if(rs.next()){
                 return new ReuniaoEntity(
                         rs.getLong("ID_REUN"),
@@ -151,6 +152,27 @@ public class ReuniaoDAO {
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar reunioes do cliente: " + e);
+        }
+    }
+
+    public void atualizar(long idReuniao, long idCliente, ReuniaoInput reuniao){
+        String query = "UPDATE REUNIAO SET TITULO_REUN = ?, DATA_REUN = ?, TEXT_TRANS = ?, STATUS_PROCESS = ?, CLIENTE_ID_CLI = ? WHERE ID_REUN = ? ";
+
+        try(Connection conn = ConexaoComBanco.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)){
+
+            stmt.setString(1, reuniao.tituloReuniao());
+            stmt.setDate(2, reuniao.dtReuniao());
+            stmt.setString(3, reuniao.textoTranscricao());
+            stmt.setString(4, reuniao.statusProcesso());
+            stmt.setLong(5, idCliente);
+            stmt.setLong(6, idReuniao);
+            int linhasAfetadas = stmt.executeUpdate();
+            if (linhasAfetadas == 0) {
+                throw new RuntimeException("Reunião com ID " + idReuniao + " não encontrada para atualização.");
+            }
+        }catch(SQLException e){
+            throw new RuntimeException("Erro ao atualizar dados na tabela REUNIAO: "+ e);
         }
     }
 }

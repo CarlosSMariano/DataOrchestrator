@@ -1,7 +1,7 @@
 # DataOrchestrator TOTVS 🚀
 
 ## Descrição do Projeto
-O **DataOrchestrator** é uma solução de backend desenvolvida em Spring Boot para processar transcrições de reuniões, gerenciar clientes e orquestrar fluxos de dados corporativos (com foco em análise de risco de Churn e integração com sistemas TOTVS).
+O **DataOrchestrator** é uma solução de backend desenvolvida em Spring Boot para processar transcrições de reuniões, gerenciar clientes e orquestrar fluxos de dados corporativos (com foco em análise de risco de Churn).
 
 O projeto adota uma arquitetura em camadas estruturada em Controllers, Services, DAOs (Data Access Object) e Models, conectando-se a um banco de dados relacional Oracle.
 

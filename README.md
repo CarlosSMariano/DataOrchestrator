@@ -28,7 +28,7 @@ O projeto está organizado em pacotes modulares:
 - **Maven** (Gerenciamento de dependências)
 
 ## Como Executar
-1. Certifique-se de ter o JDK 17 ou superior instalado e uma instância do Oracle Database configurada (ex: Oracle Database Free em `localhost:1521/FREEPDB1` com as credenciais adequadas).
+1. Certifique-se de ter o JDK 17 ou superior instalado e suba o banco de dados Oracle utilizando o **Docker Compose** (ou garanta uma instância do Oracle Database Free rodando em `localhost:1521/FREEPDB1` com as credenciais adequadas).
 2. Clone o repositório ou descompacte o arquivo `.zip` da entrega.
 3. Importe o projeto como um projeto **Maven** na sua IDE (IntelliJ IDEA ou Eclipse).
 4. Execute a classe principal `DataOrchestratorApplication`.

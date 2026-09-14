@@ -24,6 +24,7 @@ O projeto está organizado em pacotes modulares:
 - **Java 17+**
 - **Spring Boot**
 - **Oracle Database** (Driver JDBC)
+- **Flyway**
 - **Maven** (Gerenciamento de dependências)
 
 ## Como Executar

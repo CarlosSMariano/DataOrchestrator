@@ -7,8 +7,11 @@ import java.sql.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ClienteInput(
-        Long id,
-       @JsonProperty("NOME_CLI") String nome,
-        @JsonProperty("DATA_CADAST") Date dataCadast
+
+        @JsonProperty("NOME_CLI")
+        String nome,
+
+        @JsonProperty("DATA_CADAST")
+        Date dataCadast
 ) {
 }

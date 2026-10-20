@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reunioes")
@@ -31,7 +32,7 @@ public class ReuniaoController {
     }
 
     @GetMapping
-    public ResponseEntity<ArrayList<ReuniaoEntity>> listarReunioes() {
+    public ResponseEntity<List<ReuniaoEntity>> listarReunioes() {
         return ResponseEntity.ok(service.listarReunioes());
     }
 

@@ -1,72 +1,102 @@
 package br.com.fiap.totvs.DataOrchestrator.service;
 
-import br.com.fiap.totvs.DataOrchestrator.dao.ClienteDAO;
-import br.com.fiap.totvs.DataOrchestrator.dao.ReuniaoDAO;
-import br.com.fiap.totvs.DataOrchestrator.model.ClienteInput;
+import br.com.fiap.totvs.DataOrchestrator.model.ClienteEntity;
 import br.com.fiap.totvs.DataOrchestrator.model.ReuniaoEntity;
 import br.com.fiap.totvs.DataOrchestrator.model.ReuniaoInput;
+import br.com.fiap.totvs.DataOrchestrator.repository.ClienteRepository;
+import br.com.fiap.totvs.DataOrchestrator.repository.ReuniaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.List;
 
 @Service
 public class ReuniaoService {
 
     @Autowired
-    private ReuniaoDAO reuniaoDAO;
+    private ReuniaoRepository reuniaoRepository;
 
     @Autowired
-    private ClienteDAO clienteDAO;
+    private ClienteRepository clienteRepository;
 
-    public void inserirNoBanco(ReuniaoInput reuniaoInput){
-        if(reuniaoInput == null){
+    @Transactional
+    public ReuniaoEntity inserirNoBanco(ReuniaoInput reuniaoInput) {
+        if (reuniaoInput == null) {
             throw new IllegalArgumentException("Os dados da reunião não podem ser nulos.");
         }
 
-        if (reuniaoDAO.existePorTitulo(reuniaoInput.tituloReuniao())){
+        if (reuniaoRepository.existsByTitulo(reuniaoInput.tituloReuniao())) {
             throw new IllegalArgumentException("Reunião já cadastrada.");
         }
 
-        if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) == null){
-            ClienteInput cliente = new ClienteInput(
-                    null, reuniaoInput.nomeCliente(),
-                    reuniaoInput.dtReuniao());
-            clienteDAO.insert(cliente);
-        }
+        ClienteEntity cliente = buscarOuCriarCliente(reuniaoInput);
 
-        ClienteInput cli = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente());
-        reuniaoDAO.inserir(reuniaoInput, cli.id());
+        ReuniaoEntity novaReuniao = new ReuniaoEntity(
+                null,
+                reuniaoInput.tituloReuniao(),
+                reuniaoInput.dtReuniao(),
+                reuniaoInput.textoTranscricao(),
+                reuniaoInput.statusProcesso(),
+                null,
+                cliente.id()
+        );
+
+        return reuniaoRepository.save(novaReuniao);
     }
 
-    public ArrayList<ReuniaoEntity> listarReunioes(){
-       return reuniaoDAO.listar();
+    public List<ReuniaoEntity> listarReunioes() {
+        return reuniaoRepository.findAll();
     }
 
-    public ReuniaoEntity buscarReuniao(long idReuniao){
-        if (!reuniaoDAO.existePorId(idReuniao)) throw new IllegalArgumentException("Reunião inexistente.");
-        return reuniaoDAO.buscarReuniaoPorId(idReuniao);
+    public ReuniaoEntity buscarReuniao(long idReuniao) {
+        return reuniaoRepository.findById(idReuniao)
+                .orElseThrow(() -> new IllegalArgumentException("Reunião inexistente."));
     }
 
-    public void atualizarReuniao(long idReuniao, ReuniaoInput reuniaoInput){
-        if(reuniaoInput == null){
+    @Transactional
+    public ReuniaoEntity atualizarReuniao(long idReuniao, ReuniaoInput reuniaoInput) {
+        if (reuniaoInput == null) {
             throw new IllegalArgumentException("Os dados da reunião não podem ser nulos.");
         }
 
-        if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) == null){
-            ClienteInput cliente = new ClienteInput(
-                    null, reuniaoInput.nomeCliente(),
-                    reuniaoInput.dtReuniao());
-            clienteDAO.insert(cliente);
+        if (!reuniaoRepository.existsById(idReuniao)) {
+            throw new IllegalArgumentException("Reunião inexistente para atualização.");
         }
 
-        long idCliente = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()).id();
+        ClienteEntity cliente = buscarOuCriarCliente(reuniaoInput);
 
-        reuniaoDAO.atualizar(idReuniao,idCliente, reuniaoInput);
+        ReuniaoEntity reuniaoAtualizada = new ReuniaoEntity(
+                idReuniao,
+                reuniaoInput.tituloReuniao(),
+                reuniaoInput.dtReuniao(),
+                reuniaoInput.textoTranscricao(),
+                reuniaoInput.statusProcesso(),
+                null,
+                cliente.id()
+        );
+
+        return reuniaoRepository.save(reuniaoAtualizada);
     }
 
-    public void deletarReuniao(long id){
-        if (!reuniaoDAO.existePorId(id)) throw new IllegalArgumentException("Reunião inexistente.");
-        reuniaoDAO.deletar(id);
+    @Transactional
+    public void deletarReuniao(long id) {
+        if (!reuniaoRepository.existsById(id)) {
+            throw new IllegalArgumentException("Reunião inexistente.");
+        }
+        reuniaoRepository.deleteById(id);
     }
+
+    // --- Metodo Auxiliares ---
+
+    private ClienteEntity buscarOuCriarCliente(ReuniaoInput input) {
+        return clienteRepository.findByNome(input.nomeCliente())
+                .orElseGet(() -> {
+                    ClienteEntity novoCliente = new ClienteEntity(null, input.nomeCliente(), input.dtReuniao());
+                    return clienteRepository.save(novoCliente);
+                });
+    }
+
 }

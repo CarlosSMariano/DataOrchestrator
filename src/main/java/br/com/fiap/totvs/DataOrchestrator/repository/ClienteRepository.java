@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ClienteRepository extends ListCrudRepository<ClienteRepository, Long> {
+public interface ClienteRepository extends ListCrudRepository<ClienteEntity, Long> {
 
     Optional<ClienteEntity> findByNome(String nome);
 }

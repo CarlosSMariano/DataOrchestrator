@@ -1,5 +1,6 @@
 package br.com.fiap.totvs.DataOrchestrator.controller;
 
+import br.com.fiap.totvs.DataOrchestrator.model.ClienteEntity;
 import br.com.fiap.totvs.DataOrchestrator.model.ClienteInput;
 import br.com.fiap.totvs.DataOrchestrator.model.RespostaAPI;
 import br.com.fiap.totvs.DataOrchestrator.service.ClienteService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -30,12 +32,12 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<ArrayList<ClienteInput>> listarClientes() {
+    public ResponseEntity<List<ClienteEntity>> listarClientes() {
         return ResponseEntity.ok(service.listarClientes());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteInput> listarCliente(@PathVariable long id) {
+    public ResponseEntity<ClienteEntity> listarCliente(@PathVariable long id) {
         return ResponseEntity.ok(service.buscarCliente(id));
     }
 

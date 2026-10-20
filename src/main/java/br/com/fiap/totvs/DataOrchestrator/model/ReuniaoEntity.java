@@ -4,9 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.sql.Date;
 
 @Table("REUNIAO")
 public record ReuniaoEntity (
@@ -19,7 +17,7 @@ public record ReuniaoEntity (
         String titulo,
 
         @Column("DATA_REUN")
-        LocalDate data,
+        Date data,
 
         @Column("TEXT_TRANS")
         String textoTrans,

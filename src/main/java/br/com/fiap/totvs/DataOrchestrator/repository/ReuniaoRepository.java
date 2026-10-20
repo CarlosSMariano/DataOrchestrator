@@ -17,4 +17,6 @@ public interface ReuniaoRepository extends ListCrudRepository<ReuniaoEntity, Lon
     void deleteByClienteId(@Param("clienteId") Long clienteId);
 
     List<ReuniaoEntity> findByClienteId(Long clienteId);
+
+    boolean existsByTitulo(String titulo);
 }

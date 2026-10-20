@@ -1,14 +1,21 @@
 package br.com.fiap.totvs.DataOrchestrator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+import java.util.Date;
 
-import java.sql.Date;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Table("CLIENTE")
 public record ClienteEntity(
+        @Id
+        @Column("ID_CLI")
         Long id,
-       @JsonProperty("NOME_CLI") String nome,
-        @JsonProperty("DATA_CADAST") Date dataCadast
+
+        @Column("NOME_CLI")
+        String nome,
+
+        @Column("DATA_CADAST")
+        Date dataCadast
 ) {
 }

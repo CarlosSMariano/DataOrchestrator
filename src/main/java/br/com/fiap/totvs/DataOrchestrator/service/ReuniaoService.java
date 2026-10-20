@@ -2,7 +2,7 @@ package br.com.fiap.totvs.DataOrchestrator.service;
 
 import br.com.fiap.totvs.DataOrchestrator.dao.ClienteDAO;
 import br.com.fiap.totvs.DataOrchestrator.dao.ReuniaoDAO;
-import br.com.fiap.totvs.DataOrchestrator.model.ClienteEntity;
+import br.com.fiap.totvs.DataOrchestrator.model.ClienteInput;
 import br.com.fiap.totvs.DataOrchestrator.model.ReuniaoEntity;
 import br.com.fiap.totvs.DataOrchestrator.model.ReuniaoInput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +29,13 @@ public class ReuniaoService {
         }
 
         if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) == null){
-            ClienteEntity cliente = new ClienteEntity(
+            ClienteInput cliente = new ClienteInput(
                     null, reuniaoInput.nomeCliente(),
                     reuniaoInput.dtReuniao());
             clienteDAO.insert(cliente);
         }
 
-        ClienteEntity cli = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente());
+        ClienteInput cli = clienteDAO.buscarPorNome(reuniaoInput.nomeCliente());
         reuniaoDAO.inserir(reuniaoInput, cli.id());
     }
 
@@ -54,7 +54,7 @@ public class ReuniaoService {
         }
 
         if (clienteDAO.buscarPorNome(reuniaoInput.nomeCliente()) == null){
-            ClienteEntity cliente = new ClienteEntity(
+            ClienteInput cliente = new ClienteInput(
                     null, reuniaoInput.nomeCliente(),
                     reuniaoInput.dtReuniao());
             clienteDAO.insert(cliente);

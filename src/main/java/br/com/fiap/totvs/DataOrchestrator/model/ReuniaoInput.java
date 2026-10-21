@@ -10,7 +10,7 @@ public record ReuniaoInput(
         @JsonProperty("ID_MEETING")
         String tituloReuniao,
 
-        @JsonProperty("DT_MEETING")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") @JsonProperty("DT_MEETING")
         Date dtReuniao,
 
         @JsonProperty("STATUS_MEETING")
